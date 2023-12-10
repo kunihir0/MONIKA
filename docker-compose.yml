@@ -1,13 +1,14 @@
 version: '3.3'
 services:
     app:
+        build: .
         volumes:
             - ./credentials:/app/credentials
             - ./instances:/app/instances
             - ./logs:/app/logs
             - ./maps:/app/maps
         environment:
-            - RPP_DISCORD_CLIENT_ID=111....1111
-            - RPP_DISCORD_TOKEN=token
-        container_name: rpp
-        image: ghcr.io/alexemanuelol/rustplusplus
+            - RPP_DISCORD_CLIENT_ID=1105192906307936276
+            - RPP_DISCORD_TOKEN=MTEwNTE5MjkwNjMwNzkzNjI3Ng.GSj71L.vvXG9xX1dKcjhPSxFV4C7S-zi6vD88DnKUEdcQ
+            - RPP_DISCORD_USERNAME=MONIKA
+        container_name: MONIKA
