@@ -15,7 +15,9 @@ Slash Command | Description
 [**/cctv**](commands.md#cctv) | Posts CCTV codes for a monument.
 [**/craft**](commands.md#craft) | Display the cost to craft an item.
 [**/credentials**](commands.md#credentials) | Set/Clear the FCM Credentials for the user account.
+[**/decay**](commands.md#decay) | Display the decay time of an item.
 [**/help**](commands.md#help) | Display help message.
+[**/item**](commands.md#item) | Get the details of an item.
 [**/leader**](commands.md#leader) | Give or take the leadership from/to a team member.
 [**/map**](commands.md#map) | Get the currently connected server map image.
 [**/market**](commands.md#market) | Operations for In-Game Vending Machines.
@@ -26,6 +28,7 @@ Slash Command | Description
 [**/role**](commands.md#role) | Set/Clear a specific role that will be able to see the rustplusplus category content.
 [**/storagemonitor**](commands.md#storagemonitors) | Operations on Storage Monitors.
 [**/switch**](commands.md#switch) | Operations on Smart Switches.
+[**/upkeep**](commands.md#upkeep) | Get the upkeep cost of an item.
 [**/uptime**](commands.md#uptime) | Display uptime of the bot and server.
 [**/voice**](commands.md#voice) | Operations on Voice Feature.
 
@@ -127,11 +130,36 @@ Subcommand | Options | Description | Required
 ![Discord Slash Command credentials Image](images/slash_commands/credentials.png)
 
 
+## **/decay**
+
+> **Display the decay time of an item.**
+
+Subcommand | Options | Description | Required
+---------- | ------- | ----------- | --------
+&nbsp; | `name` | The name of the item. | `False`
+&nbsp; | `id` | The id of the item. | `False`
+&nbsp; | `hp` | THe current HP of the item. | `False`
+
+![Discord Slash Command decay Image](images/slash_commands/decay.png)
+
+
 ## **/help**
 
 > Display help message.
 
 ![Discord Slash Command help Image](images/slash_commands/help.png)
+
+
+## **/item**
+
+> **Get the details of an item.**
+
+Subcommand | Options | Description | Required
+---------- | ------- | ----------- | --------
+&nbsp; | `name` | The name of the item. | `False`
+&nbsp; | `id` | The id of the item. | `False`
+
+![Discord Slash Command item Image](images/slash_commands/item.png)
 
 
 ## **/leader**
@@ -282,6 +310,19 @@ Subcommand | Options | Description | Required
 
 ![Discord Slash Command switch Image](images/slash_commands/switch.png)
 
+
+## **/upkeep**
+
+> **Get the upkeep cost of an item.**
+
+Subcommand | Options | Description | Required
+---------- | ------- | ----------- | --------
+&nbsp; | `name` | The name of the item. | `False`
+&nbsp; | `id` | The id of the item. | `False`
+
+![Discord Slash Command upkeep Image](images/slash_commands/upkeep.png)
+
+
 ## **/uptime**
 
 > **Display uptime of the bot and server.**
@@ -316,7 +357,7 @@ In-Game Command | Description
 [**connection/connections**](commands.md#connectionconnections) | Get recent connection events.
 [**craft**](commands.md#craft-ingame) | Display the cost to craft an item.
 [**death/deaths**](commands.md#deathdeaths) | Get recent death events.
-[**decay**](commands.md#decay) | Get time before structure decay.
+[**decay**](commands.md#decay-ingame) | Display the decay time of an item.
 [**events**](commands.md#events) | Get recent events.
 [**heli**](commands.md#heli) | Get information about Patrol Helicopter (Location, time since last downed, time since last on map).
 [**large**](commands.md#large) | Get information about Large Oil Rig (Time till crate unlocks, time since last trigger).
@@ -409,12 +450,13 @@ In-Game Command | Description
 ![In-Game Command death Image](images/ingame_commands/death_ingame.png)
 
 
-## **decay**
+## **decay ingame**
 
-> **Get time before structure decay.**
+> **Display the decay time of an item.**
 <br>Command: `!decay`
-<br>Command: `!decay stone 100`
-<br>Command: `!decay armored 1000`
+<br>Command: `!decay Sheet Metal Door`
+<br>Command: `!decay Tug Boat 100`
+<br>Command: `!decay armored wall 450`
 
 ![In-Game Command decay Image](images/ingame_commands/decay_ingame.png)
 

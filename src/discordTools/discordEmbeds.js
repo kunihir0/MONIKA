@@ -907,7 +907,8 @@ module.exports = {
             playerCounter += 1;
 
             const status = bmInstance.players[playerId]['status'];
-            const time = status ? bmInstance.getOnlineTime(playerId)[1] : bmInstance.getOfflineTime(playerId)[1];
+            let time = status ? bmInstance.getOnlineTime(playerId) : bmInstance.getOfflineTime(playerId);
+            time = time !== null ? time[1] : '';
 
             let playerStr = status ? Constants.ONLINE_EMOJI : Constants.OFFLINE_EMOJI;
             playerStr += ` [${time}] `;
@@ -1196,6 +1197,204 @@ module.exports = {
 
         if (description !== '') {
             embed.setDescription(description);
+        }
+
+        return embed;
+    },
+
+    getItemEmbed: function (guildId, itemName, itemId, type) {
+        const title = `${itemName} (${itemId})`;
+
+        const fields = [];
+        const embed = module.exports.getEmbed({
+            title: title,
+            color: Constants.COLOR_DEFAULT,
+            timestamp: true
+        });
+
+        const decayDetails = type === 'items' ? Client.client.rustlabs.getDecayDetailsById(itemId) :
+            Client.client.rustlabs.getDecayDetailsByName(itemId);
+        if (decayDetails !== null) {
+            const details = decayDetails[3];
+            const hp = details.hpString;
+            if (hp !== null) {
+                fields.push({
+                    name: Client.client.intlGet(guildId, 'hp'),
+                    value: hp,
+                    inline: true
+                });
+            }
+
+            let decayString = '';
+            const decay = details.decayString;
+            if (decay !== null) {
+                decayString += `${decay}\n`;
+            }
+
+            const decayOutside = details.decayOutsideString;
+            if (decayOutside !== null) {
+                decayString += `${Client.client.intlGet(guildId, 'outside')}: ${decayOutside}\n`;
+            }
+
+            const decayInside = details.decayInsideString;
+            if (decayInside !== null) {
+                decayString += `${Client.client.intlGet(guildId, 'inside')}: ${decayInside}\n`;
+            }
+
+            const decayUnderwater = details.decayUnderwaterString;
+            if (decayUnderwater !== null) {
+                decayString += `${Client.client.intlGet(guildId, 'underwater')}: ${decayUnderwater}\n`;
+            }
+
+            if (decayString !== '') {
+                fields.push({
+                    name: Client.client.intlGet(guildId, 'decay'),
+                    value: decayString,
+                    inline: true
+                });
+            }
+        }
+
+        const despawnDetails = type === 'items' ? Client.client.rustlabs.getDespawnDetailsById(itemId) : null;
+        if (despawnDetails !== null) {
+            const details = despawnDetails[2];
+            fields.push({
+                name: Client.client.intlGet(guildId, 'despawnTime'),
+                value: details.timeString,
+                inline: true
+            });
+        }
+
+        const stackDetails = type === 'items' ? Client.client.rustlabs.getStackDetailsById(itemId) : null;
+        if (stackDetails !== null) {
+            const details = stackDetails[2];
+            fields.push({
+                name: Client.client.intlGet(guildId, 'stackSize'),
+                value: details.quantity,
+                inline: true
+            });
+        }
+
+
+        const upkeepDetails = type === 'items' ? Client.client.rustlabs.getUpkeepDetailsById(itemId) :
+            Client.client.rustlabs.getUpkeepDetailsByName(itemId);
+        if (upkeepDetails !== null) {
+            const details = upkeepDetails[3];
+
+            let upkeepString = '';
+            for (const item of details) {
+                const name = Client.client.items.getName(item.id);
+                const quantity = item.quantity;
+                upkeepString += `${quantity} ${name}\n`;
+            }
+
+            fields.push({
+                name: Client.client.intlGet(guildId, 'upkeep'),
+                value: upkeepString,
+                inline: true
+            });
+        }
+
+        const craftDetails = type === 'items' ? Client.client.rustlabs.getCraftDetailsById(itemId) : null;
+        if (craftDetails !== null) {
+            const details = craftDetails[2];
+            let workbenchString = '';
+            if (details.workbench !== null) {
+                const workbenchShortname = Client.client.items.getShortName(details.workbench);
+                switch (workbenchShortname) {
+                    case 'workbench1': {
+                        workbenchString = ' (T1)';
+                    } break;
+
+                    case 'workbench2': {
+                        workbenchString = ' (T2)';
+                    } break;
+
+                    case 'workbench3': {
+                        workbenchString = ' (T3)';
+                    } break;
+                }
+            }
+
+            let craftString = '';
+
+            for (const ingredient of details.ingredients) {
+                const amount = `${ingredient.quantity}x`;
+                const name = Client.client.items.getName(ingredient.id);
+                craftString += `${amount} ${name}\n`;
+            }
+
+            if (craftString !== '') {
+                fields.push({
+                    name: Client.client.intlGet(guildId, 'craft') + workbenchString,
+                    value: craftString,
+                    inline: true
+                });
+            }
+        }
+
+        const recycleDetails = type === 'items' ? Client.client.rustlabs.getRecycleDetailsById(itemId) : null;
+        if (recycleDetails !== null) {
+            const details = recycleDetails[2];
+
+            let recycleString = '';
+            for (const recycleItem of details) {
+                const name = Client.client.items.getName(recycleItem.id);
+                const quantityProbability = recycleItem.probability !== 1 ?
+                    `${parseInt(recycleItem.probability * 100)}%` :
+                    `${recycleItem.quantity}x`;
+                recycleString += `${quantityProbability} ${name}\n`;
+            }
+
+            if (recycleString !== '') {
+                fields.push({
+                    name: Client.client.intlGet(guildId, 'recycle'),
+                    value: recycleString,
+                    inline: true
+                });
+            }
+        }
+
+        const researchDetails = type === 'items' ? Client.client.rustlabs.getResearchDetailsById(itemId) : null;
+        if (researchDetails !== null) {
+            const details = researchDetails[2];
+            let workbenchString = '';
+            if (details.workbench !== null) {
+                const workbenchShortname = Client.client.items.getShortName(details.workbench.type);
+                switch (workbenchShortname) {
+                    case 'workbench1': {
+                        workbenchString = 'T1: ';
+                    } break;
+
+                    case 'workbench2': {
+                        workbenchString = 'T2: ';
+                    } break;
+
+                    case 'workbench3': {
+                        workbenchString = 'T3: ';
+                    } break;
+                }
+                workbenchString += `${details.workbench.scrap} (${details.workbench.totalScrap})\n`;
+            }
+
+            let researchTableString = '';
+            if (details.researchTable !== null) {
+                researchTableString = `${Client.client.intlGet(guildId, 'researchTable')}: ${details.researchTable}\n`;
+            }
+
+            const researchString = `${workbenchString}${researchTableString}`;
+
+            if (researchString !== '') {
+                fields.push({
+                    name: Client.client.intlGet(guildId, 'research'),
+                    value: researchString,
+                    inline: true
+                });
+            }
+        }
+
+        if (fields.length !== 0) {
+            embed.setFields(...fields);
         }
 
         return embed;
